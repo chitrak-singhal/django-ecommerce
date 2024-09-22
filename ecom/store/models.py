@@ -30,7 +30,7 @@ class Product(models.Model):
     img = models.ImageField(upload_to='uploads/product/')
 
     def __str__(self):
-        return self.name
+        return self.product_name
 
 class Seller(models.Model):
     seller_name = models.CharField(max_length=255, null=False)

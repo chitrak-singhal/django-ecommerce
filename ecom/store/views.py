@@ -1,7 +1,10 @@
 from django.shortcuts import render
+from .models import Product
 
 def home(request):
-    return render(request, 'home.html',{})
+    products = Product.objects.all()
+    return render(request, 'home.html',{'products':products})
 
 def test(request):
-    return render(request, 'test.html',{})
+    products = Product.objects.all()
+    return render(request, 'test.html',{'products':products})
