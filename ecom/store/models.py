@@ -2,20 +2,35 @@ from django.db import models
 import datetime
 
 class User(models.Model):
-    email_id = models.CharField(max_length=255, null=False, unique=True)
+    first_name = models.CharField(max_length=50, null=False)
+    last_name = models.CharField(max_length=50, null=False)
+    email_id = models.EmailField(max_length=100, null=False, unique=True)
     password = models.CharField(max_length=255, null=False)
     mobile = models.BigIntegerField(null=False, unique=True)
     isplusmember = models.BooleanField(default=False)
 
+    def __str__(self):
+        return f'{self.first_name} {self.last_name}'
+
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
+class Category(models.Model):
+    name = models.CharField(max_length=50, null=False)
+
+    def __str__(self):
+        return self.name
+
 class Product(models.Model):
     product_name = models.CharField(max_length=255, null=False)
-    product_price = models.BigIntegerField(null=False)
+    product_price = models.DecimalField(null=False, decimal_places=2, max_digits=8)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, default=1)
     discount = models.BigIntegerField(default=0)
     product_description = models.TextField(default="No description available")
-    img_id = models.BigIntegerField(null=False)
+    img = models.ImageField(upload_to='uploads/product/')
+
+    def __str__(self):
+        return self.name
 
 class Seller(models.Model):
     seller_name = models.CharField(max_length=255, null=False)
@@ -26,7 +41,9 @@ class ProductsSellers(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
 
 class Order(models.Model):
-    order_total = models.BigIntegerField(null=False)
+    order_total = models.DecimalField(null=False, decimal_places=2, max_digits=8)
+    date = models.DateField(default=datetime.datetime.today)
+    status = models.BooleanField(default=False)
 
 class UserOrders(models.Model):  # Renamed for consistency
     user = models.ForeignKey(User, on_delete=models.CASCADE)
