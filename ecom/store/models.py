@@ -1,5 +1,6 @@
 from django.db import models
 import datetime
+from django.contrib.auth.models import User as AuthUser
 
 class User(models.Model):
     first_name = models.CharField(max_length=50, null=False)
@@ -13,7 +14,7 @@ class User(models.Model):
         return f'{self.first_name} {self.last_name}'
 
 class Cart(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(AuthUser, on_delete=models.CASCADE)
 
 class Category(models.Model):
     name = models.CharField(max_length=50, null=False)
