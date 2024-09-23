@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Product, Cart, CartProducts
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .forms import CustomUserCreationForm
 
 def home(request):
     products = Product.objects.all()
@@ -50,3 +51,15 @@ def cart_page(request):
     cart = Cart.objects.filter(user=request.user).first()
     cart_products = CartProducts.objects.filter(cart=cart) if cart else []
     return render(request, 'cart.html', {'cart_products': cart_products})
+
+def register(request):
+    if request.method == 'POST':
+        #print('hello')
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')  
+    else:
+        form = CustomUserCreationForm()
+    
+    return render(request, 'register.html', {'form': form})
