@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Cart, CartProducts
+from .models import Product, Cart, CartProducts, Seller
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, ProductForm
 
 def home(request):
     products = Product.objects.all()
@@ -63,3 +63,40 @@ def register(request):
         form = CustomUserCreationForm()
     
     return render(request, 'register.html', {'form': form})
+
+def seller_page(request):
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES)
+        if form.is_valid():
+            product = form.save(commit=False)
+            # Get the seller associated with the logged-in user
+            seller = Seller.objects.get(user=request.user)
+            product.seller = seller
+            product.save()
+            return redirect('seller_page')
+    else:
+        form = ProductForm()
+    
+    # Get the seller's products
+    seller = Seller.objects.get(user=request.user)
+    seller_products = Product.objects.filter(seller=seller)
+    
+    return render(request, 'seller.html', {'form': form, 'products': seller_products})
+
+def edit_product(request, pk):
+    product = get_object_or_404(Product, id=pk)
+
+    if request.method == 'POST':
+        form = ProductForm(request.POST, request.FILES, instance=product)
+        
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Product updated successfully!")
+            return redirect('seller_page')
+        else:
+            print(form.errors)  # Debugging: Check for any errors
+    else:
+        form = ProductForm(instance=product)
+
+    return render(request, 'edit_product.html', {'form': form, 'product': product})
+
