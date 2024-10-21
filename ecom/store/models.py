@@ -22,6 +22,14 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Seller(models.Model):
+    user = models.OneToOneField(AuthUser, on_delete=models.CASCADE)
+    seller_name = models.CharField(max_length=255, null=False)
+    account_id = models.BigIntegerField(null=False, unique=True)
+
+    def __str__(self):
+        return self.seller_name
+
 class Product(models.Model):
     product_name = models.CharField(max_length=255, null=False)
     product_price = models.DecimalField(null=False, decimal_places=2, max_digits=8)
@@ -29,13 +37,11 @@ class Product(models.Model):
     discount = models.BigIntegerField(default=0)
     product_description = models.TextField(default="No description available")
     img = models.ImageField(upload_to='uploads/product/')
+    seller = models.ForeignKey(Seller, on_delete=models.CASCADE, related_name="products")
 
     def __str__(self):
         return self.product_name
 
-class Seller(models.Model):
-    seller_name = models.CharField(max_length=255, null=False)
-    account_id = models.BigIntegerField(null=False, unique=True)
 
 class ProductsSellers(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
