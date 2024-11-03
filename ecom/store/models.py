@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 
 class UserProfile(models.Model):  # Extended User model
     user = models.OneToOneField(AuthUser, on_delete=models.CASCADE)
-    mobile = models.BigIntegerField(default = 9999999999, unique=True)
+    mobile = models.CharField(max_length=10,default = '9999999999', unique=True)
     is_plus_member = models.BooleanField(default=False)
 
     def __str__(self):
@@ -70,7 +70,7 @@ class OrdersProducts(models.Model):
     quantity = models.BigIntegerField(default=1)
 
 class Address(models.Model):
-    house_no = models.BigIntegerField(null=False)
+    house_no = models.CharField(max_length=15,null=False)
     street_name = models.CharField(max_length=255, default="Unknown")
     address_lines = models.TextField(null=False)
     city = models.CharField(max_length=255, null=False)

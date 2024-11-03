@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Product, Cart, CartProducts, Seller, Category, Order, OrdersProducts, UserOrders
+from .models import Product, Cart, CartProducts, Seller, Category, Order, OrdersProducts, UserOrders, UserProfile, UserAddresses, Address
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -63,11 +63,13 @@ def cart_page(request):
 
 def register(request):
     if request.method == 'POST':
-        #print('hello')
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')  
+            user = form.save()  # This will save the user and associated profile and address
+            login(request, user)  
+            return redirect('home') 
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = CustomUserCreationForm()
     
@@ -151,5 +153,13 @@ def order_summary(request, order_id):
         'order_products': order_products,
     })
 
-
+@login_required  # Ensure that only logged-in users can access this page
+def profile(request):
+    user_profile = UserProfile.objects.get(user=request.user)  
+    addresses = UserAddresses.objects.filter(user=request.user)
+    return render(request, 'profile.html', {
+        'user': request.user,
+        'user_profile': user_profile,
+        'addresses': addresses,
+    })
 
