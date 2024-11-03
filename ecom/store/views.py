@@ -6,7 +6,14 @@ from .forms import CustomUserCreationForm, ProductForm
 
 def home(request):
     products = Product.objects.all()
-    return render(request, 'home.html',{'products':products})
+    
+    # Check if the user is a seller
+    is_seller = False
+    if request.user.is_authenticated:
+        is_seller = Seller.objects.filter(user=request.user).exists()
+
+    return render(request, 'home.html', {'products': products, 'is_seller': is_seller})
+
 
 def test(request):
     products = Product.objects.all()
@@ -87,17 +94,24 @@ def seller_page(request):
 
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    
     if request.method == 'POST':
+        # Check if the delete button was clicked
+        if 'delete' in request.POST:
+            product.delete()
+            return redirect('seller_page')
+        
+        # Otherwise, handle the update functionality
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
             form.save()
             return redirect('seller_page')
     else:
         form = ProductForm(instance=product)
-    
-    # Fetch all categories to pass to the template
+
     categories = Category.objects.all()
 
     return render(request, 'edit_product.html', {'form': form, 'product': product, 'categories': categories})
+
 
 
