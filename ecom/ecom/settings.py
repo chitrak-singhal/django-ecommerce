@@ -42,6 +42,8 @@ INSTALLED_APPS = [
      'theme',
      'ckeditor',
      'ckeditor_uploader',
+     'crispy_forms',
+     'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -141,7 +143,7 @@ NPM_BIN_PATH = "C:\\Program Files\\nodejs\\npm.cmd"  # Adjust the path as needed
 
 CKEDITOR_UPLOAD_PATH = "ecom/media/uploads/"  # Folder to store uploaded images
 CKEDITOR_IMAGE_BACKEND = "pillow"
-
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 # CKEDITOR_CONFIGS = {
 #     'default': {
 #         'toolbar': 'full',
