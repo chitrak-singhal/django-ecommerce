@@ -119,21 +119,17 @@ def edit_product(request, product_id):
 
 #@login_required
 def checkout(request):
-    # Retrieve user's cart
     cart = Cart.objects.get(user=request.user)
     cart_products = CartProducts.objects.filter(cart=cart)
 
-    # Calculate total order amount
     order_total = sum(item.quantity * item.product.product_price for item in cart_products)
 
-    # Create a new order
     order = Order.objects.create(order_total=order_total, date=timezone.now(), status=False)
 
     # Link products from the cart to the order and clear the cart
     for item in cart_products:
         OrdersProducts.objects.create(order=order, product=item.product, quantity=item.quantity)
     
-    # Clear the cart
     cart_products.delete()
 
     return redirect('order_summary', order_id=order.id)

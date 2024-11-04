@@ -34,6 +34,7 @@
             <button class="text-gray-600"><a href="{% url 'home' %}">About</a></button>    
               {% if user.is_authenticated %}
                   <button class="text-gray-600"><a href="{% url 'logout' %}">Logout</a></button>  
+                  <button class="text-gray-600"><a href="{% url 'profile' %}">Profile</a></button>
                   {% if is_seller %}
                       <button class="text-gray-600"><a href="{% url 'seller_page' %}">Go to Seller Page</a></button>
                   {% endif %}
